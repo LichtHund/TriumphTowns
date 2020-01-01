@@ -1,0 +1,4 @@
+name: TriumphTowns
+version: ${project.version}
+main: me.mattstudios.triumphtowns.TriumphTowns
+api-version: 1.13
