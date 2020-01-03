@@ -1,11 +1,16 @@
 package me.mattstudios.triumphtowns;
 
 import me.mattstudios.mattscore.MattPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class TriumphTowns extends MattPlugin implements Listener {
+
+    private boolean clicked;
 
     @Override
     protected void onPluginEnable() {
@@ -14,7 +19,26 @@ public final class TriumphTowns extends MattPlugin implements Listener {
 
     @EventHandler
     public void onTest(PlayerInteractEvent event) {
-        System.out.println(event.getAction().name());
+
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+
+        if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.GOLDEN_SHOVEL) return;
+
+        event.setCancelled(true);
+
+        if (!clicked) {
+            Bukkit.getScheduler().runTaskLater(this, () -> event.getPlayer().sendBlockChange(event.getClickedBlock().getLocation(), Material.DIAMOND_BLOCK.createBlockData()), 1L);
+
+            clicked = true;
+
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new TestThingy(event.getClickedBlock().getLocation(), event.getPlayer()), 0L, 1L);
+
+            return;
+        }
+
+
+
+
     }
 
 }
