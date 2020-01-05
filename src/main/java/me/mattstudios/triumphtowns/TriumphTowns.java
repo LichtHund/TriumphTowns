@@ -27,11 +27,9 @@ public final class TriumphTowns extends MattPlugin implements Listener {
         event.setCancelled(true);
 
         if (!clicked) {
-            Bukkit.getScheduler().runTaskLater(this, () -> event.getPlayer().sendBlockChange(event.getClickedBlock().getLocation(), Material.DIAMOND_BLOCK.createBlockData()), 1L);
-
             clicked = true;
 
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new TestThingy(event.getClickedBlock().getLocation(), event.getPlayer()), 0L, 1L);
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new TestThingy(event.getClickedBlock(), event.getPlayer()), 0L, 1L);
 
             return;
         }
