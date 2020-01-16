@@ -1,6 +1,7 @@
 package me.mattstudios.triumphtowns
 
-import me.mattstudios.mattscore.MattPlugin
+import me.mattstudios.mattcore.MattPlugin
+import me.mattstudios.mfgui.gui.GUI
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
@@ -8,15 +9,17 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 
+
 class TriumphTowns : MattPlugin(), Listener {
 
     private var clicked = false
 
     override fun onPluginEnable() {
         registerListener(this)
+        var gui = GUI(this, "")
+
     }
 
-    // Will move later
     @EventHandler
     fun onTest(event: PlayerInteractEvent) {
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
@@ -29,4 +32,5 @@ class TriumphTowns : MattPlugin(), Listener {
             return
         }
     }
+
 }

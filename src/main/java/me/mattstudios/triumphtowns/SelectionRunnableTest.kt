@@ -275,7 +275,7 @@ class SelectionRunnableTest(private val mainBlock: Block, private val player: Pl
      */
     private fun getLookingBlock(player: Player): Block? {
         val iterator = BlockIterator(player, 10)
-        var lastBlock: Block = iterator.next()
+        var lastBlock = iterator.next()
 
         while (iterator.hasNext()) {
             lastBlock = iterator.next()
