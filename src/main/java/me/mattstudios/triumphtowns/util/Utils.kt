@@ -1,11 +1,10 @@
-package me.mattstudios.triumphtowns
+package me.mattstudios.triumphtowns.util
 
 import org.bukkit.World
 import org.bukkit.block.Block
 
 object Utils {
 
-    @JvmStatic
     fun getHighestSolidBlockAt(world: World, x: Int, z: Int): Block {
         var highest = world.getHighestBlockAt(x, z)
 

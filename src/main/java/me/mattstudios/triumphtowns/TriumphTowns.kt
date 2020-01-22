@@ -1,36 +1,30 @@
 package me.mattstudios.triumphtowns
 
 import me.mattstudios.mattcore.MattPlugin
-import me.mattstudios.mfgui.gui.GUI
-import org.bukkit.Bukkit
-import org.bukkit.Material
-import org.bukkit.event.EventHandler
+import me.mattstudios.triumphtowns.command.TestCommand
+import me.mattstudios.triumphtowns.config.Settings
+import me.mattstudios.triumphtowns.listener.ClaimingListener
+import me.mattstudios.triumphtowns.locale.Locales
+import me.mattstudios.triumphtowns.locale.Message
+import me.mattstudios.triumphtowns.manager.TownManager
 import org.bukkit.event.Listener
-import org.bukkit.event.block.Action
-import org.bukkit.event.player.PlayerInteractEvent
 
 
 class TriumphTowns : MattPlugin(), Listener {
 
-    private var clicked = false
+    val townManager: TownManager = TownManager()
+
+    companion object {
+        var LOCALE = Locales.EN_US
+    }
 
     override fun onPluginEnable() {
-        registerListener(this)
-        var gui = GUI(this, "")
+        config.load(Settings::class.java)
+        locale.load(Message::class.java, "en_US.yml")
 
+        registerListeners(ClaimingListener(this))
+        registerCommands(TestCommand(this))
     }
 
-    @EventHandler
-    fun onTest(event: PlayerInteractEvent) {
-        if (event.action != Action.RIGHT_CLICK_BLOCK) return
-        if (event.player.inventory.itemInMainHand.type != Material.GOLDEN_SHOVEL) return
-        event.isCancelled = true
-
-        if (!clicked) {
-            clicked = true
-            Bukkit.getScheduler().runTaskTimer(this, SelectionRunnableTest(event.clickedBlock!!, event.player), 0L, 1L)
-            return
-        }
-    }
 
 }

@@ -1,6 +1,6 @@
 package me.mattstudios.triumphtowns
 
-import me.mattstudios.triumphtowns.Utils.getHighestSolidBlockAt
+import me.mattstudios.triumphtowns.util.Utils.getHighestSolidBlockAt
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.block.Block
