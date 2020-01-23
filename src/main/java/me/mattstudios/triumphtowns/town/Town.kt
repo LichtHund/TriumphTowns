@@ -1,7 +1,7 @@
 package me.mattstudios.triumphtowns.town
 
-class Town {
+import java.util.UUID
 
-    
+class Town(val uuid: UUID, var name: String) {
 
 }

@@ -12,8 +12,7 @@ class PlayerListener(private val plugin: TriumphTowns) : Listener {
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
         if (plugin.townManager.isTownPlayer(player.uniqueId)) return
-
-        plugin.townManager.addTownPlayer(TownPlayer(player.uniqueId))
+        plugin.townManager.addNewTownPlayer(TownPlayer(player.uniqueId))
     }
 
 }
