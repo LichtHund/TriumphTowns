@@ -11,7 +11,7 @@ import org.bukkit.Material
 object Settings : SettingsHolder {
 
     @JvmField
-    @Comment("Make this false to disable update checking")
+    @Comment("Make this false to disable update checking [default: true]")
     val UPDATE_CHECK: Property<Boolean> = newProperty("update-check", true)
 
     /**
@@ -19,12 +19,20 @@ object Settings : SettingsHolder {
      */
 
     @JvmField
-    @Comment("Turn this false to disable claiming animation")
+    @Comment("Turn this false to disable claiming animation [default: true]")
     val CLAIM_ANIMATION: Property<Boolean> = newProperty("claim.animation", true)
 
     @JvmField
-    @Comment("Material to use as the main block of claims")
-    val MAIN_CLAIM_MATERIAL: Property<String> = newProperty("claim.claim-material", Material.EMERALD_BLOCK.name)
+    @Comment("Material to use as the main block of claims [default: EMERALD_BLOCK]")
+    val MAIN_CLAIM_MATERIAL: Property<String> = newProperty("claim.main-material", Material.EMERALD_BLOCK.name)
+
+    @JvmField
+    @Comment("Material to use as the main block if the claim is invalid [default: REDSTONE_BLOCK]")
+    val INVALID_CLAIM_MATERIAL: Property<String> = newProperty("claim.invalid-material", Material.REDSTONE_BLOCK.name)
+
+    @JvmField
+    @Comment("Material to use as the directional sides of the claim [default: IRON_BLOCK]")
+    val SIDES_CLAIM_MATERIAL: Property<String> = newProperty("claim.sides-material", Material.IRON_BLOCK.name)
 
 
     override fun registerComments(conf: CommentsConfiguration) {

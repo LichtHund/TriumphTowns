@@ -2,7 +2,7 @@ package me.mattstudios.triumphtowns.listener
 
 import me.mattstudios.triumphtowns.TriumphTowns
 import me.mattstudios.triumphtowns.config.Settings.CLAIM_ANIMATION
-import me.mattstudios.triumphtowns.scheduler.ClaimSelectionScheduler
+import me.mattstudios.triumphtowns.scheduler.ClaimAnimationScheduler
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
@@ -32,7 +32,7 @@ internal class ClaimingListener(private val plugin: TriumphTowns) : Listener {
 
         if (plugin.config.get(CLAIM_ANIMATION)) {
             println("Starting")
-            val claimSelectionScheduler = ClaimSelectionScheduler(plugin, player, townPlayer, event.clickedBlock!!, System.currentTimeMillis())
+            val claimSelectionScheduler = ClaimAnimationScheduler(plugin, player, townPlayer, event.clickedBlock!!, System.currentTimeMillis())
             Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, claimSelectionScheduler, 1L, 1L)
         }
     }

@@ -1,7 +1,9 @@
 package me.mattstudios.triumphtowns.scheduler
 
 import me.mattstudios.triumphtowns.TriumphTowns
-import me.mattstudios.triumphtowns.config.Settings
+import me.mattstudios.triumphtowns.config.Settings.INVALID_CLAIM_MATERIAL
+import me.mattstudios.triumphtowns.config.Settings.MAIN_CLAIM_MATERIAL
+import me.mattstudios.triumphtowns.config.Settings.SIDES_CLAIM_MATERIAL
 import me.mattstudios.triumphtowns.town.TownPlayer
 import me.mattstudios.triumphtowns.util.Utils
 import org.bukkit.Material
@@ -10,14 +12,19 @@ import org.bukkit.entity.Player
 import org.bukkit.util.BlockIterator
 import kotlin.math.abs
 
-class ClaimSelectionScheduler(private val plugin: TriumphTowns,
+class ClaimAnimationScheduler(plugin: TriumphTowns,
                               private val player: Player,
                               private val townPlayer: TownPlayer,
                               private val originBlock: Block,
                               private val clickTime: Long) : Runnable {
 
-    private var mainMaterial = Material.getMaterial(plugin.config.get(Settings.MAIN_CLAIM_MATERIAL))
+    private var mainMaterial = Material.getMaterial(plugin.config.get(MAIN_CLAIM_MATERIAL))
             ?: Material.EMERALD_BLOCK
+    private var invalidMaterial = Material.getMaterial(plugin.config.get(INVALID_CLAIM_MATERIAL))
+            ?: Material.REDSTONE_BLOCK
+    private var sidesMaterial = Material.getMaterial(plugin.config.get(SIDES_CLAIM_MATERIAL))
+            ?: Material.IRON_BLOCK
+
     private var blocksCount = 0
 
     private var lookingBlock = originBlock
@@ -39,11 +46,18 @@ class ClaimSelectionScheduler(private val plugin: TriumphTowns,
 
     override fun run() {
 
+        if (player.inventory.itemInMainHand.type != Material.GOLDEN_SHOVEL) {
+            resetAll()
+            return
+        }
+
         changeMainBlock(player, originBlock)
 
         val newLooking: Block? = getLookingBlock(player) ?: return
 
-        this.lookingBlock = newLooking!!
+        if (sameLocation(lookingBlock, newLooking!!)) return
+
+        this.lookingBlock = newLooking
 
         lookingBlockHandler(player)
 
@@ -70,7 +84,7 @@ class ClaimSelectionScheduler(private val plugin: TriumphTowns,
      */
     private fun changeMainBlock(player: Player, block: Block) {
         if (blocksCount > townPlayer.claimBlocks) {
-            player.sendBlockChange(block.location, Material.REDSTONE_BLOCK.createBlockData())
+            player.sendBlockChange(block.location, invalidMaterial.createBlockData())
         } else {
             player.sendBlockChange(block.location, mainMaterial.createBlockData())
         }
@@ -80,7 +94,7 @@ class ClaimSelectionScheduler(private val plugin: TriumphTowns,
      * Change the blocks on the sides of the pointer and the main block
      */
     private fun sideChange(player: Player, block: Block) {
-        player.sendBlockChange(block.location, Material.IRON_BLOCK.createBlockData())
+        player.sendBlockChange(block.location, sidesMaterial.createBlockData())
     }
 
     /**
@@ -90,15 +104,19 @@ class ClaimSelectionScheduler(private val plugin: TriumphTowns,
         player.sendBlockChange(block.location, block.type.createBlockData())
     }
 
+    private fun sameLocation(block: Block, block2: Block): Boolean {
+        return block.location == block2.location
+    }
+
     /**
      * Handles the changes on the looking block
      */
     private fun lookingBlockHandler(player: Player) {
         changeMainBlock(player, lookingBlock)
 
-        if (lookingBlock.location == prevLooking.location) return
-        if (prevLooking.location != originBlock.location) resetBlock(player, prevLooking)
-        if (lookingBlock.location == originBlock.location) return
+        if (sameLocation(lookingBlock, prevLooking)) return
+        if (!sameLocation(prevLooking, originBlock)) resetBlock(player, prevLooking)
+        if (sameLocation(lookingBlock, originBlock)) return
 
         prevLooking = lookingBlock
     }
@@ -109,7 +127,7 @@ class ClaimSelectionScheduler(private val plugin: TriumphTowns,
     private fun corner1BlockHandler(player: Player) {
         corner1Block = Utils.getHighestSolidBlockAt(player.world, lookingBlock.x, originBlock.z)
 
-        if (corner1Block.location == prevCorner1.location && lookingBlock.location != prevLooking.location) return
+        if (sameLocation(corner1Block, prevCorner1) && !sameLocation(lookingBlock, prevLooking)) return
         if (prevCorner1.location != originBlock.location) resetBlock(player, prevCorner1)
         if (corner1Block.location == originBlock.location) return
 
@@ -218,6 +236,19 @@ class ClaimSelectionScheduler(private val plugin: TriumphTowns,
         sideChange(player, side2Looking)
 
         prevSide2Looking = side2Looking
+    }
+
+    private fun resetAll() {
+        originBlock.state.update()
+        lookingBlock.state.update()
+        corner1Block.state.update()
+        corner2Block.state.update()
+        side1Looking.state.update()
+        side2Looking.state.update()
+        side1Origin.state.update()
+        side2Origin.state.update()
+
+        lookingBlock = originBlock
     }
 
     /**
