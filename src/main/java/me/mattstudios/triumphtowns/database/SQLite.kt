@@ -143,7 +143,7 @@ class SQLite(private val plugin: TriumphTowns) : Database {
 
             resultSet.close()
         } catch (e: SQLException) {
-            info("&cAn error occurred caching the towns data!")
+            info("&cAn error occurred caching the players data!")
             e.printStackTrace()
         } finally {
             if (connection != null) {

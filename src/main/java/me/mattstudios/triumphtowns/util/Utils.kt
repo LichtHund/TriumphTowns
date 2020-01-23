@@ -5,6 +5,9 @@ import org.bukkit.block.Block
 
 object Utils {
 
+    /**
+     * Gets the highest block in the location
+     */
     fun getHighestSolidBlockAt(world: World, x: Int, z: Int): Block {
         var highest = world.getHighestBlockAt(x, z)
 
