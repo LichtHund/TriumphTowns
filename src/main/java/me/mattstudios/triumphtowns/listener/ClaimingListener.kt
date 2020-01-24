@@ -33,8 +33,8 @@ internal class ClaimingListener(private val plugin: TriumphTowns) : Listener {
         if (plugin.config.get(CLAIM_ANIMATION)) {
             println("Starting")
             val claimSelectionScheduler = ClaimAnimationScheduler(plugin, player, townPlayer, event.clickedBlock!!, System.currentTimeMillis())
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, claimSelectionScheduler, 1L, 1L)
-        }
+            Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, claimSelectionScheduler, 1L, 1L)
+        } 
     }
 
 }

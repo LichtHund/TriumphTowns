@@ -1,5 +1,6 @@
 package me.mattstudios.triumphtowns.scheduler
 
+import me.mattstudios.mattcore.utils.MessageUtils.color
 import me.mattstudios.triumphtowns.TriumphTowns
 import me.mattstudios.triumphtowns.config.Settings.INVALID_CLAIM_MATERIAL
 import me.mattstudios.triumphtowns.config.Settings.MAIN_CLAIM_MATERIAL
@@ -53,11 +54,19 @@ class ClaimAnimationScheduler(plugin: TriumphTowns,
 
         changeMainBlock(player, originBlock)
 
+        var color = "&a&l"
+
+        if (blocksCount > townPlayer.claimBlocks) color = "&c&l"
+
+        player.sendTitle("", color("${color}Selecting: &3${getXSelected()} ${color}x &3${getZSelected()}"), 0, 10, 10)
+
         val newLooking: Block? = getLookingBlock(player) ?: return
 
         if (sameLocation(lookingBlock, newLooking!!)) return
 
         this.lookingBlock = newLooking
+
+        countBlocks()
 
         lookingBlockHandler(player)
 
@@ -68,15 +77,21 @@ class ClaimAnimationScheduler(plugin: TriumphTowns,
 
         corner1BlockHandler(player)
         corner2BlockHandler(player)
-
-        countBlocks()
     }
 
     /**
      * Counts how many blocks are being selected
      */
     private fun countBlocks() {
-        blocksCount = (abs(lookingBlock.x - originBlock.x) + 1) * (abs(lookingBlock.z - originBlock.z) + 1)
+        blocksCount = getXSelected() * getZSelected()
+    }
+
+    private fun getXSelected(): Int {
+        return abs(lookingBlock.x - originBlock.x) + 1
+    }
+
+    private fun getZSelected(): Int {
+        return abs(lookingBlock.z - originBlock.z) + 1
     }
 
     /**
@@ -115,7 +130,11 @@ class ClaimAnimationScheduler(plugin: TriumphTowns,
         changeMainBlock(player, lookingBlock)
 
         if (sameLocation(lookingBlock, prevLooking)) return
-        if (!sameLocation(prevLooking, originBlock)) resetBlock(player, prevLooking)
+
+        if (!sameLocation(prevLooking, originBlock)) {
+            resetBlock(player, prevLooking)
+        }
+
         if (sameLocation(lookingBlock, originBlock)) return
 
         prevLooking = lookingBlock
@@ -128,8 +147,9 @@ class ClaimAnimationScheduler(plugin: TriumphTowns,
         corner1Block = Utils.getHighestSolidBlockAt(player.world, lookingBlock.x, originBlock.z)
 
         if (sameLocation(corner1Block, prevCorner1) && !sameLocation(lookingBlock, prevLooking)) return
-        if (prevCorner1.location != originBlock.location) resetBlock(player, prevCorner1)
-        if (corner1Block.location == originBlock.location) return
+        if (lookingBlock.z == originBlock.z) return
+        if (!sameLocation(prevCorner1, originBlock) && !sameLocation(prevCorner1, side2Origin)) resetBlock(player, prevCorner1)
+        if (sameLocation(corner1Block, originBlock)) return
 
         changeMainBlock(player, corner1Block)
 
@@ -142,9 +162,10 @@ class ClaimAnimationScheduler(plugin: TriumphTowns,
     private fun corner2BlockHandler(player: Player) {
         corner2Block = Utils.getHighestSolidBlockAt(player.world, originBlock.x, lookingBlock.z)
 
-        if (corner2Block.location == prevCorner2.location && lookingBlock.location != prevLooking.location) return
-        if (prevCorner2.location != originBlock.location) resetBlock(player, prevCorner2)
-        if (corner2Block.location == originBlock.location) return
+        if (sameLocation(corner2Block, prevCorner2) && !sameLocation(lookingBlock, prevLooking)) return
+        if (lookingBlock.x == originBlock.x) return
+        if (!sameLocation(prevCorner2, originBlock) && !sameLocation(prevCorner2, side1Origin)) resetBlock(player, prevCorner2)
+        if (sameLocation(corner2Block, originBlock)) return
 
         changeMainBlock(player, corner2Block)
 
@@ -163,10 +184,10 @@ class ClaimAnimationScheduler(plugin: TriumphTowns,
         if (lookingBlock.z == originBlock.z)
             side1Origin = Utils.getHighestSolidBlockAt(player.world, originBlock.x, originBlock.z)
 
-        if (side1Origin.location == prevSide1Origin.location && lookingBlock.location != prevLooking.location) return
-        if (prevSide1Origin.location != originBlock.location && prevSide1Origin.location != lookingBlock.location) resetBlock(player, prevSide1Origin)
-        if (side1Origin.location == originBlock.location) return
-        if (side1Origin.location == lookingBlock.location) return
+        if (sameLocation(side1Origin, prevSide1Origin) && !sameLocation(lookingBlock, prevLooking)) return
+        if (!sameLocation(prevSide1Origin, originBlock) && !sameLocation(prevSide1Origin, lookingBlock)) resetBlock(player, prevSide1Origin)
+        if (sameLocation(side1Origin, originBlock)) return
+        if (sameLocation(side1Origin, lookingBlock)) return
 
         sideChange(player, side1Origin)
 
@@ -185,10 +206,10 @@ class ClaimAnimationScheduler(plugin: TriumphTowns,
         if (lookingBlock.x == originBlock.x)
             side2Origin = Utils.getHighestSolidBlockAt(player.world, originBlock.x, originBlock.z)
 
-        if (side2Origin.location == prevSide2Origin.location && lookingBlock.location != prevLooking.location) return
-        if (prevSide2Origin.location != originBlock.location && prevSide2Origin.location != lookingBlock.location) resetBlock(player, prevSide2Origin)
-        if (side2Origin.location == originBlock.location) return
-        if (side2Origin.location == lookingBlock.location) return
+        if (sameLocation(side2Origin, prevSide2Origin) && !sameLocation(lookingBlock, prevLooking)) return
+        if (!sameLocation(prevSide2Origin, originBlock) && !sameLocation(prevSide2Origin, lookingBlock)) resetBlock(player, prevSide2Origin)
+        if (sameLocation(side2Origin, originBlock)) return
+        if (sameLocation(side2Origin, lookingBlock)) return
 
         sideChange(player, side2Origin)
 
@@ -206,10 +227,17 @@ class ClaimAnimationScheduler(plugin: TriumphTowns,
         if (lookingBlock.x == originBlock.x)
             side1Looking = Utils.getHighestSolidBlockAt(player.world, lookingBlock.x, lookingBlock.z)
 
-        if (side1Looking.location == prevSide1Looking.location && lookingBlock.location != prevLooking.location) return
-        if (prevSide1Looking.location != originBlock.location && prevSide1Looking.location != lookingBlock.location) resetBlock(player, prevSide1Looking)
-        if (side1Looking.location == originBlock.location) return
-        if (side1Looking.location == lookingBlock.location) return
+        if (sameLocation(side1Looking, prevSide1Looking) && !sameLocation(lookingBlock, prevLooking)) return
+
+        if (!sameLocation(prevSide1Looking, originBlock) &&
+                !sameLocation(prevSide1Looking, lookingBlock) &&
+                !sameLocation(prevSide1Looking, side1Origin) &&
+                !sameLocation(prevSide1Looking, side2Origin)) {
+            resetBlock(player, prevSide1Looking)
+        }
+
+        if (sameLocation(side1Looking, originBlock)) return
+        if (sameLocation(side1Looking, lookingBlock)) return
 
         sideChange(player, side1Looking)
 
@@ -228,16 +256,27 @@ class ClaimAnimationScheduler(plugin: TriumphTowns,
         if (lookingBlock.z == originBlock.z)
             side2Looking = Utils.getHighestSolidBlockAt(player.world, lookingBlock.x, lookingBlock.z)
 
-        if (side2Looking.location == prevSide2Looking.location && lookingBlock.location != prevLooking.location) return
-        if (prevSide2Looking.location != originBlock.location && prevSide2Looking.location != lookingBlock.location) resetBlock(player, prevSide2Looking)
-        if (side2Looking.location == originBlock.location) return
-        if (side2Looking.location == lookingBlock.location) return
+
+        if (sameLocation(side2Looking, prevSide2Looking) && !sameLocation(lookingBlock, prevLooking)) return
+
+        if (!sameLocation(prevSide2Looking, originBlock) &&
+                !sameLocation(prevSide2Looking, lookingBlock) &&
+                !sameLocation(prevSide2Looking, side1Origin) &&
+                !sameLocation(prevSide2Looking, side2Origin)) {
+            resetBlock(player, prevSide2Looking)
+        }
+
+        if (sameLocation(side2Looking, originBlock)) return
+        if (sameLocation(side2Looking, lookingBlock)) return
 
         sideChange(player, side2Looking)
 
         prevSide2Looking = side2Looking
     }
 
+    /**
+     * Resets all the blocks to their default stage
+     */
     private fun resetAll() {
         originBlock.state.update()
         lookingBlock.state.update()
