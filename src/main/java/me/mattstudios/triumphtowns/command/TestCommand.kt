@@ -12,7 +12,6 @@ class TestCommand(private val plugin: TriumphTowns) : CommandBase() {
     @Default
     fun testCommand(player: Player) {
         player.sendMessage("Set test")
-        plugin.townManager.test()
     }
 
 }

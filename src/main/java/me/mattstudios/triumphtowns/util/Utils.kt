@@ -16,4 +16,11 @@ object Utils {
             highest = world.getBlockAt(highest.x, highest.y - 1, highest.z)
         }
     }
+
+    /**
+     * Gets an identifier to use on the schedulers
+     */
+    fun identifier(identifier: String, type: String): String {
+        return "[$identifier|$type]"
+    }
 }

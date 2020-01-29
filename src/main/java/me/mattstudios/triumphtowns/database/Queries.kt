@@ -18,12 +18,12 @@ object Queries {
     const val SQLITE_CREATE_CLAIMS = "CREATE TABLE IF NOT EXISTS `claims`(\n" +
             "  `claim_id` INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
             "  `type` BOOLEAN,\n" +
-            "  `uuid` VARCHAR(36),\n" +
-            "  `first_corner` varchar(512),\n" +
-            "  `second_corner` varchar(512),\n" +
-            "  FOREIGN KEY (`uuid`)\n" +
+            "  `owner_uuid` VARCHAR(36),\n" +
+            "  `lower_corner` varchar(512),\n" +
+            "  `upper_corner` varchar(512),\n" +
+            "  FOREIGN KEY (`owner_uuid`)\n" +
             "       REFERENCES `town_players` (`uuid`),\n " +
-            "  FOREIGN KEY (`uuid`)\n" +
+            "  FOREIGN KEY (`owner_uuid`)\n" +
             "       REFERENCES `towns` (`uuid`)\n" +
             ")"
 

@@ -9,8 +9,18 @@ import me.mattstudios.triumphtowns.TriumphTowns
 object Message : SettingsHolder {
 
     @JvmField
-    @Comment("Testing a comment")
-    val UPDATE_CHECK: Property<String> =
-            PropertyInitializer.newProperty(LanguageDefaults.TEST_LANG.getPath(), LanguageDefaults.TEST_LANG.get(TriumphTowns.LOCALE))
+    @Comment("Actionbar message displayed when claim is too small")
+    val CLAIM_ACTIONBAR_SMALL: Property<String> =
+            PropertyInitializer.newProperty(LanguageDefaults.CLAIM_ACTIONBAR_SMALL.getPath(), LanguageDefaults.CLAIM_ACTIONBAR_SMALL.get(TriumphTowns.LOCALE))
+
+    @JvmField
+    @Comment("Actionbar message displayed when there isn't enough claimblocks to claim (claim is too big)")
+    val CLAIM_ACTIONBAR_BIG: Property<String> =
+            PropertyInitializer.newProperty(LanguageDefaults.CLAIM_ACTIONBAR_BIG.getPath(), LanguageDefaults.CLAIM_ACTIONBAR_BIG.get(TriumphTowns.LOCALE))
+
+    @JvmField
+    @Comment("Actionbar message displayed when claim is valid")
+    val CLAIM_ACTIONBAR: Property<String> =
+            PropertyInitializer.newProperty(LanguageDefaults.CLAIM_ACTIONBAR.getPath(), LanguageDefaults.CLAIM_ACTIONBAR.get(TriumphTowns.LOCALE))
 
 }
